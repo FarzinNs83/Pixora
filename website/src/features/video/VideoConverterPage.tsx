@@ -1,4 +1,4 @@
-import { CheckCircle, FileVideo, FileZip, Stop, Trash, UploadSimple, WarningCircle } from '@phosphor-icons/react';
+import { CheckCircle, FileAudio, FileVideo, FileZip, Stop, Trash, UploadSimple, WarningCircle } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { createZip } from '../../app/archive';
@@ -11,6 +11,7 @@ import { maxVideoWidth, parseTrimRange, parseVideoWidth, videoOutputFormats, typ
 const copy = {
   en: {
     title: 'Video converter', drop: 'Drop media files here',
+    audioTitle: 'Video to MP3', audioDrop: 'Drop video files here', audioSupport: 'The soundtrack is saved as MP3',
     browse: 'Choose files', support: 'Video, audio and GIF files', empty: 'No files yet', output: 'Output format', quality: 'Quality',
     maxWidth: 'Maximum width', original: 'Leave empty to keep the original width', audio: 'Keep audio', metadata: 'Remove metadata',
     convert: 'Convert files', downloadAll: 'Download all', preparingZip: 'Preparing ZIP', clear: 'Clear', cancel: 'Cancel', queued: 'Ready', loading: 'Loading engine',
@@ -20,6 +21,7 @@ const copy = {
   },
   fa: {
     title: 'مبدل ویدیو', drop: 'فایل‌های رسانه را اینجا رها کنید',
+    audioTitle: 'ویدیو به MP3', audioDrop: 'فایل‌های ویدیو را اینجا رها کنید', audioSupport: 'صدای ویدیو با فرمت MP3 ذخیره می‌شود',
     browse: 'انتخاب فایل', support: 'ویدیو، صدا و GIF', empty: 'هنوز فایلی اضافه نشده', output: 'فرمت خروجی', quality: 'کیفیت',
     maxWidth: 'حداکثر عرض', original: 'برای حفظ عرض اصلی خالی بگذارید', audio: 'نگه‌داشتن صدا', metadata: 'حذف متادیتا',
     convert: 'تبدیل فایل‌ها', downloadAll: 'دانلود همه', preparingZip: 'در حال ساخت ZIP', clear: 'پاک کردن', cancel: 'لغو', queued: 'آماده', loading: 'بارگذاری موتور',
@@ -29,14 +31,15 @@ const copy = {
   },
 } as const;
 
-export function VideoConverterPage({ uiLanguage }: { uiLanguage: Language }) {
+export function VideoConverterPage({ uiLanguage, mode = 'video' }: { uiLanguage: Language; mode?: 'video' | 'audio' }) {
   const t = copy[uiLanguage];
+  const audioMode = mode === 'audio';
   const { downloadFile } = useDownloadCenter();
   const inputRef = useRef<HTMLInputElement>(null);
   const watermarkRef = useRef<HTMLInputElement>(null);
   const runId = useRef(0);
   const [jobs, setJobs] = useState<VideoJob[]>([]);
-  const [format, setFormat] = useState<VideoOutputFormat>('mp4');
+  const [format, setFormat] = useState<VideoOutputFormat>(audioMode ? 'mp3' : 'mp4');
   const [quality, setQuality] = useState(70);
   const [maxWidth, setMaxWidth] = useState('');
   const [keepAudio, setKeepAudio] = useState(true);
@@ -113,7 +116,7 @@ export function VideoConverterPage({ uiLanguage }: { uiLanguage: Language }) {
     setZipping(true);
     try {
       const blob = await createZip(completed.map((job) => ({ name: videoOutputName(job.file.name, job.output!.outputFormat), bytes: job.output!.bytes })));
-      downloadFile({ name: 'pixora-videos.zip', blob });
+      downloadFile({ name: audioMode ? 'pixora-audio.zip' : 'pixora-videos.zip', blob });
     } catch (error) {
       setFormError(error instanceof Error ? error.message : String(error));
     } finally {
@@ -122,23 +125,23 @@ export function VideoConverterPage({ uiLanguage }: { uiLanguage: Language }) {
   };
 
   return <main className="tool-page">
-    <header className="tool-heading"><h1>{t.title}</h1></header>
+    <header className="tool-heading"><h1>{audioMode ? t.audioTitle : t.title}</h1></header>
     <input ref={inputRef} data-testid="video-input" className="visually-hidden" type="file" accept="video/*,audio/*,.gif,.mkv,.flv,.m4v,.mts,.m2ts" multiple onChange={(event) => { if (event.target.files) addFiles(event.target.files); event.target.value = ''; }} />
     <input ref={watermarkRef} className="visually-hidden" type="file" accept="image/png,image/webp,image/jpeg" onChange={(event) => setWatermark(event.target.files?.[0])} />
     <section className={dragging ? 'drop-zone dragging' : 'drop-zone'} onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={(event) => { event.preventDefault(); setDragging(false); addFiles(event.dataTransfer.files); }}>
-      <span className="drop-icon"><UploadSimple size={28} weight="duotone" /></span><div><strong>{t.drop}</strong><small>{t.support}</small></div><button type="button" onClick={() => inputRef.current?.click()}>{t.browse}</button>
+      <span className="drop-icon"><UploadSimple size={28} weight="duotone" /></span><div><strong>{audioMode ? t.audioDrop : t.drop}</strong><small>{audioMode ? t.audioSupport : t.support}</small></div><button type="button" onClick={() => inputRef.current?.click()}>{t.browse}</button>
     </section>
     <div className="converter-layout">
       <section className="queue-panel">
         <div className="queue-toolbar"><strong>{jobs.length} {t.files}</strong><div><button type="button" data-testid="download-all-videos" disabled={busy || zipping || !jobs.some((job) => job.output)} onClick={downloadAll}><FileZip size={17} />{zipping ? t.preparingZip : t.downloadAll}</button><button type="button" disabled={busy || !jobs.length} onClick={() => setJobs([])}><Trash size={17} />{t.clear}</button></div></div>
-        <div className="queue-list">{jobs.length === 0 ? <div className="queue-empty"><FileVideo size={34} /><span>{t.empty}</span></div> : jobs.map((job) => <article className="queue-item" data-testid="video-job" data-status={job.status} key={job.id}>
+        <div className="queue-list">{jobs.length === 0 ? <div className="queue-empty">{audioMode ? <FileAudio size={34} /> : <FileVideo size={34} />}<span>{t.empty}</span></div> : jobs.map((job) => <article className="queue-item" data-testid="video-job" data-status={job.status} key={job.id}>
           <span className={`job-state ${job.status}`}>{job.status === 'done' ? <CheckCircle size={19} /> : job.status === 'error' ? <WarningCircle size={19} /> : <FileVideo size={19} />}</span>
           <div><strong title={job.file.name}>{job.file.name}</strong><small>{job.file.type || 'media'} / {formatFileSize(job.file.size)}{job.output ? ` → ${formatFileSize(job.output.bytes.byteLength)}` : ''}{job.output?.limitedToWidth ? ` · ≤${job.output.limitedToWidth}px` : ''}</small>{job.error && <em>{job.error}</em>}{(job.status === 'loading' || job.status === 'processing') && <span className="job-progress"><i style={{ width: `${Math.max(4, Math.round(job.progress * 100))}%` }} /></span>}</div>
           <span className="job-result">{job.status === 'processing' ? `${Math.round(job.progress * 100)}%` : job.status === 'done' && job.output ? `${Math.abs(savingPercent(job.file.size, job.output.bytes.byteLength))}% ${savingPercent(job.file.size, job.output.bytes.byteLength) >= 0 ? t.smaller : t.larger}` : t[job.status]}</span>
         </article>)}</div>
       </section>
       <aside className="image-settings">
-        <fieldset className="format-field"><legend>{t.output}</legend><div>{videoOutputFormats.map((item) => <button type="button" data-testid={`video-format-${item}`} className={format === item ? 'active' : ''} key={item} onClick={() => setFormat(item)}>{item.toUpperCase()}</button>)}</div></fieldset>
+        {!audioMode && <fieldset className="format-field"><legend>{t.output}</legend><div>{videoOutputFormats.map((item) => <button type="button" data-testid={`video-format-${item}`} className={format === item ? 'active' : ''} key={item} onClick={() => setFormat(item)}>{item.toUpperCase()}</button>)}</div></fieldset>}
         {format !== 'wav' && <fieldset className="range-field quality-field"><legend><span>{t.quality}</span><b>{quality}%</b></legend><input aria-label={t.quality} type="range" min="20" max="100" value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></fieldset>}
         {!audioOnly && <label className="dimension-field single-field"><span>{t.maxWidth}</span><input inputMode="numeric" type="number" min="2" max={maxVideoWidth} step="2" placeholder="px" value={maxWidth} onChange={(event) => setMaxWidth(event.target.value)} /><small>{t.original}</small></label>}
         <fieldset className="dimension-field"><legend>{t.trim}</legend><div><label>{t.start}<input inputMode="decimal" type="number" min="0" step="0.1" placeholder="0" value={trimStart} onChange={(event) => setTrimStart(event.target.value)} /></label><label>{t.end}<input inputMode="decimal" type="number" min="0" step="0.1" placeholder="—" value={trimEnd} onChange={(event) => setTrimEnd(event.target.value)} /></label></div><small>{t.trimHint}</small></fieldset>

@@ -1,0 +1,77 @@
+name: Desktop builds
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify-web:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - name: Install locked web dependencies
+        working-directory: website
+        run: npm ci
+      - name: Audit dependencies
+        working-directory: website
+        run: npm audit
+      - name: Unit tests and production build
+        working-directory: website
+        run: npm test && npm run test:engine && npm run test:ai && npm run test:video-engine && npm run typecheck && npm run build
+      - name: Browser processing smoke test
+        working-directory: website
+        run: npm run test:e2e
+
+  build-desktop:
+    needs: verify-web
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: windows
+            artifact_path: build/windows/x64/runner/Release
+          - os: ubuntu-24.04
+            target: linux
+            artifact_path: build/linux/x64/release/bundle
+          - os: macos-14
+            target: macos
+            artifact_path: build/macos/Build/Products/Release/pixora.app
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.41.2
+          channel: stable
+          cache: true
+      - name: Install Linux WebView build dependencies
+        if: matrix.target == 'linux'
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev libayatana-appindicator3-dev ninja-build
+      - name: Build React workspace
+        working-directory: website
+        run: npm ci && npm run build
+      - name: Resolve Flutter dependencies
+        run: flutter pub get
+      - name: Analyze active Flutter shell
+        run: dart analyze lib/main.dart lib/app lib/core/server lib/features/desktop_shell test/app_widget_test.dart test/core/server test/features/desktop_shell
+      - name: Test Flutter shell and local server
+        run: flutter test test/app_widget_test.dart test/core/server test/features/desktop_shell
+      - name: Build release bundle
+        run: flutter build ${{ matrix.target }} --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pixora-${{ matrix.target }}
+          path: ${{ matrix.artifact_path }}
+          if-no-files-found: error

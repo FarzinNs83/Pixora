@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../app/desktop_tray.dart';
 import '../../../../app/theme/app_theme.dart';
 
 class PixoraTitleBar extends StatelessWidget {
@@ -76,7 +77,11 @@ class PixoraTitleBar extends StatelessWidget {
                 ),
                 MinimizeWindowButton(colors: buttonColors, animate: true),
                 MaximizeWindowButton(colors: buttonColors, animate: true),
-                CloseWindowButton(colors: closeColors, animate: true),
+                CloseWindowButton(
+                  colors: closeColors,
+                  animate: true,
+                  onPressed: DesktopTray.instance.hideToTray,
+                ),
               ],
             ),
           ),

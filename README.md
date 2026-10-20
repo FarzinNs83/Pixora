@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="website/dist/pixora-mark.svg" alt="Pixora Logo" width="80" height="80" />
+<img src="website/public/pixora-mark.svg" alt="Pixora Logo" width="80" height="80" />
 
 # Pixora
 
@@ -10,9 +10,13 @@ Pixora runs entirely on your machine. No uploads, no cloud processing — your f
 
 [![Telegram Channel](https://img.shields.io/badge/Telegram-Channel-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/farzin_the_tech_guy)
 [![Telegram Support](https://img.shields.io/badge/Telegram-Support-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/feri_ns83)
-[![GitHub](https://img.shields.io/badge/GitHub-FarzinNs83%2Fpixora-181717?style=flat&logo=github&logoColor=white)](https://github.com/FarzinNs83/pixora)
+[![GitHub](https://img.shields.io/badge/GitHub-FarzinNs83%2FPixora--Tool-181717?style=flat&logo=github&logoColor=white)](https://github.com/FarzinNs83/Pixora-Tool)
 
 </div>
+
+<p align="center">
+  <img src="docs/screenshot.png" alt="Pixora home screen" width="900" />
+</p>
 
 ---
 
@@ -24,7 +28,9 @@ Pixora runs entirely on your machine. No uploads, no cloud processing — your f
 - **Video Trimming** — Cut videos with precise start/end timestamps
 - **Watermarking** — Overlay a custom image watermark with configurable position and opacity
 - **Lorem Ipsum Generator** — Generate placeholder text with custom paragraph/word counts
-- **Bilingual UI** — Full English and Persian (فارسی) interface support
+- **Video to MP3** — Extract the soundtrack of any video as MP3
+- **Bilingual UI** — Full English and Persian interface support
+- **System tray** — Closing the window keeps Pixora running in the Windows tray; use the tray menu to reopen or quit
 - **Cross-platform** — Windows, macOS, and Linux
 
 ---
@@ -41,8 +47,8 @@ Pixora runs entirely on your machine. No uploads, no cloud processing — your f
 
 ```bash
 # Clone the repository
-git clone https://github.com/FarzinNs83/pixora.git
-cd pixora
+git clone https://github.com/FarzinNs83/Pixora-Tool.git
+cd Pixora-Tool
 
 # Install Flutter dependencies
 flutter pub get
@@ -53,6 +59,10 @@ flutter run -d macos     # macOS
 flutter run -d linux     # Linux
 ```
 
+### Install on Windows
+
+Download `Pixora-Setup-<version>-x64.exe` from the [Releases](https://github.com/FarzinNs83/Pixora-Tool/releases) page and run it. No administrator rights are required.
+
 ### Build a release
 
 ```bash
@@ -60,6 +70,16 @@ flutter build windows --release
 flutter build macos   --release
 flutter build linux   --release
 ```
+
+### Build the Windows installer
+
+Requires [Inno Setup 6](https://jrsoftware.org/isinfo.php). After `flutter build windows --release`:
+
+```bash
+"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\pixora.iss
+```
+
+The installer is written to `artifacts/installer/`. Place `ffmpeg.exe` next to `pixora.exe` in the release folder before compiling to bundle native video conversion.
 
 ---
 
@@ -93,7 +113,7 @@ Pixora embeds a local HTTP server inside the Flutter shell. At startup it binds 
 
 | | |
 |---|---|
-| **GitHub** | [github.com/FarzinNs83/pixora](https://github.com/FarzinNs83/pixora) |
+| **GitHub** | [github.com/FarzinNs83/Pixora-Tool](https://github.com/FarzinNs83/Pixora-Tool) |
 | **Telegram Channel** | [t.me/farzin_the_tech_guy](https://t.me/farzin_the_tech_guy) |
 | **Telegram Support** | [t.me/feri_ns83](https://t.me/feri_ns83) |
 

@@ -40,6 +40,8 @@ function Workspace() {
     ? <ImageConverterPage uiLanguage={language} />
     : activeTool === 'video-converter'
     ? <VideoConverterPage uiLanguage={language} />
+    : activeTool === 'audio-extractor'
+    ? <VideoConverterPage uiLanguage={language} mode="audio" />
     : activeTool === 'background-remover'
     ? <BackgroundRemoverPage uiLanguage={language} />
     : activeTool === 'lorem'

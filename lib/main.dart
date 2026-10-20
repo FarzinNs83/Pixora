@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -6,6 +7,7 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'app/desktop_tray.dart';
 import 'app/pixora_app.dart';
 
 Future<void> main(List<String> args) async {
@@ -35,6 +37,7 @@ Future<void> main(List<String> args) async {
         ..alignment = Alignment.center
         ..title = 'Pixora'
         ..show();
+      unawaited(DesktopTray.instance.initialize());
     });
   }
 }

@@ -30,6 +30,13 @@ describe('Pixora workspace navigation', () => {
     fireEvent.click(within(screen.getByRole('main')).getByRole('button', { name: 'Video converter' }));
     expect(screen.getByRole('heading', { name: 'Video converter' })).toBeInTheDocument();
     expect(screen.getByTestId('video-input')).toBeInTheDocument();
+    expect(screen.getByTestId('video-format-mp4')).toBeInTheDocument();
+
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'All tools' })).getByRole('button', { name: 'Video to MP3' }));
+    expect(screen.getByRole('heading', { name: 'Video to MP3' })).toBeInTheDocument();
+    expect(screen.getByTestId('video-input')).toBeInTheDocument();
+    expect(screen.queryByTestId('video-format-mp4')).not.toBeInTheDocument();
+    expect(screen.queryByText('Video watermark')).not.toBeInTheDocument();
 
     fireEvent.click(within(screen.getByRole('navigation', { name: 'All tools' })).getByRole('button', { name: 'Background remover' }));
     expect(screen.getByRole('heading', { name: 'Background remover' })).toBeInTheDocument();
