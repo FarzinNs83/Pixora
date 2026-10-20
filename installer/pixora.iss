@@ -8,7 +8,7 @@
   #define AppVersion "1.0.0"
 #endif
 #define AppPublisher "Farzin Nasiri"
-#define AppURL "https://github.com/FarzinNs83/Pixora-Tool"
+#define AppURL "https://github.com/FarzinNs83/Pixora"
 #define AppExeName "pixora.exe"
 #define BuildDir "..\build\windows\x64\runner\Release"
 

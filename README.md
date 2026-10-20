@@ -10,7 +10,7 @@ Pixora runs entirely on your machine. No uploads, no cloud processing — your f
 
 [![Telegram Channel](https://img.shields.io/badge/Telegram-Channel-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/farzin_the_tech_guy)
 [![Telegram Support](https://img.shields.io/badge/Telegram-Support-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://t.me/feri_ns83)
-[![GitHub](https://img.shields.io/badge/GitHub-FarzinNs83%2FPixora--Tool-181717?style=flat&logo=github&logoColor=white)](https://github.com/FarzinNs83/Pixora-Tool)
+[![GitHub](https://img.shields.io/badge/GitHub-FarzinNs83%2FPixora-181717?style=flat&logo=github&logoColor=white)](https://github.com/FarzinNs83/Pixora)
 
 </div>
 
@@ -47,8 +47,8 @@ Pixora runs entirely on your machine. No uploads, no cloud processing — your f
 
 ```bash
 # Clone the repository
-git clone https://github.com/FarzinNs83/Pixora-Tool.git
-cd Pixora-Tool
+git clone https://github.com/FarzinNs83/Pixora.git
+cd Pixora
 
 # Install Flutter dependencies
 flutter pub get
@@ -61,7 +61,7 @@ flutter run -d linux     # Linux
 
 ### Install on Windows
 
-Download `Pixora-Setup-<version>-x64.exe` from the [Releases](https://github.com/FarzinNs83/Pixora-Tool/releases) page and run it. No administrator rights are required.
+Download `Pixora-Setup-<version>-x64.exe` from the [Releases](https://github.com/FarzinNs83/Pixora/releases) page and run it. No administrator rights are required.
 
 ### Build a release
 
@@ -113,7 +113,7 @@ Pixora embeds a local HTTP server inside the Flutter shell. At startup it binds 
 
 | | |
 |---|---|
-| **GitHub** | [github.com/FarzinNs83/Pixora-Tool](https://github.com/FarzinNs83/Pixora-Tool) |
+| **GitHub** | [github.com/FarzinNs83/Pixora](https://github.com/FarzinNs83/Pixora) |
 | **Telegram Channel** | [t.me/farzin_the_tech_guy](https://t.me/farzin_the_tech_guy) |
 | **Telegram Support** | [t.me/feri_ns83](https://t.me/feri_ns83) |
 
